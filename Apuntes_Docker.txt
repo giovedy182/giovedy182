@@ -1,0 +1,492 @@
+# Instalar Docker - Debian.
+# Forma 1: Desde el Docker Get.
+https://get.docker.com/
+
+curl -fsSL https://get.docker.com -o get-docker.sh
+chmod -x get-docker.sh
+sh get-docker.sh
+-----
+#Ejecuta al interno#
+#sudo -E sh -c curl -fsSL "https://download.docker.com/linux/debian/gpg" | gpg --dearmor --yes -o /etc/apt/keyrings/docker.gpg
+#/etc/apt/sources.list.d/docker.list
+-----
+sudo systemctl enable docker
+sudo systemctl status docker
+sudo systemctl start docker
+sudo systemctl stop docker
+
+giovedy@debian11-mini:~$ docker --version
+Docker version 20.10.17, build 100c701
+
+
+giovedy@debian11-mini:~$ sudo docker version
+Client: Docker Engine - Community
+ Version:           20.10.17
+ API version:       1.41
+ Go version:        go1.17.11
+ Git commit:        100c701
+ Built:             Mon Jun  6 23:03:17 2022
+ OS/Arch:           linux/amd64
+ Context:           default
+ Experimental:      true
+
+Server: Docker Engine - Community
+ Engine:
+  Version:          20.10.17
+  API version:      1.41 (minimum version 1.12)
+  Go version:       go1.17.11
+  Git commit:       a89b842
+  Built:            Mon Jun  6 23:01:23 2022
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.6.8
+  GitCommit:        9cd3357b7fd7218e4aec3eae239db1f68a5a6ec6
+ runc:
+  Version:          1.1.4
+  GitCommit:        v1.1.4-0-g5fd4c4d
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+
+giovedy@debian11-mini:~$ sudo docker pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+7a6db449b51b: Pull complete
+ca1981974b58: Pull complete
+d4019c921e20: Pull complete
+7cb804d746d4: Pull complete
+e7a561826262: Pull complete
+7247f6e5c182: Pull complete
+Digest: sha256:b95a99feebf7797479e0c5eb5ec0bdfa5d9f504bc94da550c2f58e839ea6914f
+Status: Downloaded newer image for nginx:latest
+docker.io/library/nginx:latest
+
+giovedy@debian11-mini:~$ sudo docker image ls
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+nginx        latest    2b7d6430f78d   2 weeks ago   142MB
+
+# Instanciar un container 
+giovedy@debian11-mini:~$ sudo docker container run -d --name webserver -p 80:80 nginx
+394574c4c3b5dc4ada28590da651209a9bf5eb0732809b13b6fbe3ad76948265
+
+giovedy@debian11-mini:~$ sudo docker container ls
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                               NAMES
+394574c4c3b5   nginx     "/docker-entrypoint.…"   54 seconds ago   Up 52 seconds   0.0.0.0:80->80/tcp, :::80->80/tcp   webserver
+
+giovedy@debian11-mini:~$ sudo docker container stop webserver
+webserver
+
+giovedy@debian11-mini:~$ sudo docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+giovedy@debian11-mini:~$ sudo docker container ls -a
+CONTAINER ID   IMAGE     COMMAND                  CREATED         STATUS                      PORTS     NAMES
+394574c4c3b5   nginx     "/docker-entrypoint.…"   3 minutes ago   Exited (0) 31 seconds ago             webserver
+
+giovedy@debian11-mini:~$ sudo docker pull postgres
+Using default tag: latest
+latest: Pulling from library/postgres
+7a6db449b51b: Already exists
+b4f184bc0704: Pull complete
+606a73c0d34a: Pull complete
+c39f1600d2b6: Pull complete
+31f42f92b0fe: Pull complete
+c8b67d2b0354: Pull complete
+31107b8480ee: Pull complete
+b26434cf8bfa: Pull complete
+36220bd76bfa: Pull complete
+b79e75c4a0c2: Pull complete
+cc1ab699dda5: Pull complete
+37312064dd9b: Pull complete
+4bce56fcbfe5: Pull complete
+Digest: sha256:befb4cdc1d944bd89784b9caa287cf025f0720f9a02436038124163accd177dc
+Status: Downloaded newer image for postgres:latest
+docker.io/library/postgres:latest
+
+giovedy@debian11-mini:~$ sudo docker pull postgres:10
+10: Pulling from library/postgres
+bff3e048017e: Pull complete
+e3e180bf7c2b: Pull complete
+62eff3cc0cff: Pull complete
+3d90a128d4ff: Pull complete
+ba4ce0c5ab29: Pull complete
+a8f4b87076a9: Pull complete
+4b437d281a7e: Pull complete
+f1841d9dcb17: Pull complete
+b05674a6c170: Pull complete
+d59b5be914c6: Pull complete
+901d5d9b0beb: Pull complete
+4a7aa9546b2c: Pull complete
+0a0d389be22f: Pull complete
+fb7bd7cfbcd2: Pull complete
+Digest: sha256:b2baf8998630663d21370da06387c950e587071bdd307ee34e661cdcc7442bcc
+Status: Downloaded newer image for postgres:10
+docker.io/library/postgres:10
+giovedy@debian11-mini:~$
+
+giovedy@debian11-mini:~$ sudo docker images
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+postgres     latest    b37c2a6c1506   2 weeks ago    376MB
+nginx        latest    2b7d6430f78d   2 weeks ago    142MB
+postgres     10        1cad456b3a24   2 months ago   202MB
+
+giovedy@debian11-mini:~$ sudo docker image ls
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+postgres     latest    b37c2a6c1506   2 weeks ago    376MB
+nginx        latest    2b7d6430f78d   2 weeks ago    142MB
+postgres     10        1cad456b3a24   2 months ago   202MB
+giovedy@debian11-mini:~$
+
+giovedy@debian11-mini:~$ sudo docker image rm postgres:10
+Untagged: postgres:10
+Untagged: postgres@sha256:b2baf8998630663d21370da06387c950e587071bdd307ee34e661cdcc7442bcc
+Deleted: sha256:1cad456b3a24ef930138f26a5f8e389d367083d6c1482781ea4c5ff7a14c6b1e
+Deleted: sha256:8bb09214a3944c4f6b84fafcaa5902e608a98773eeaca90918cf2a95272c0285
+Deleted: sha256:dc3303c31bdc5ef39ceed065999d491117139c2b8563153fffae5a1a7807871f
+Deleted: sha256:cc8bce1576aca32e8ecb676cf9ac088725a3359c10f391f99bdbd0c3b918956b
+Deleted: sha256:23eedc975e732f4833fa8d48affdfd181443c86ed9ee99cfdfbad6d8295c7434
+Deleted: sha256:6b6ccc86df8244e97974093b5af4d526b57336b2fe3c20963e14b329feb8bedd
+Deleted: sha256:8861101cd1cfa3871a1a3ecd77fd10a3d9b4a6e3fa703e3909704837cafb004b
+Deleted: sha256:f759b9ad4a077f015f97fdaa5427b4ccf5ef1dffe1ee01bfaec5000a1021ffca
+Deleted: sha256:79edd2944e774f0c25e09245c1a7119eb2734db6f526e2d2fbb7e7b14ec89bc7
+Deleted: sha256:c40aa51e10bb5a01d52a8f75ddfb0fed8d8ffeed1a4c607e5c78cbd6d446b09d
+Deleted: sha256:550e20d2a52fe672de02d22064d068220ec95ff656eebe87d4f335bc4694b16c
+Deleted: sha256:c17f6415e1a400fdebf215b1ec31902051ea8229229e239f98c4530afd802ad5
+Deleted: sha256:4f4ea7e2a3517d20df983ffaa81689123df5ce8e239bef3948d8e2046dc9f52f
+Deleted: sha256:defbd2bc395dc11815d74a71e199d9514ee7b11dc27a75c9f14a7650dd94f648
+Deleted: sha256:992f38e1a81cbdf2903fab2603f6076f3bef54262b4b2aa5b196515bac953688
+giovedy@debian11-mini:~$
+
+giovedy@debian11-mini:~$ sudo docker container run --name postgresdb -d -e POSTGRES_PASSWORD=pass postgres
+3cc80063f976b17ad4ce7308502485d36b2576077c2e62abc93d8fe7fe408fe5
+
+giovedy@debian11-mini:~$ sudo docker ps
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS      NAMES
+3cc80063f976   postgres   "docker-entrypoint.s…"   28 seconds ago   Up 27 seconds   5432/tcp   postgresdb
+
+giovedy@debian11-mini:~$ sudo docker container ls
+CONTAINER ID   IMAGE      COMMAND                  CREATED         STATUS         PORTS      NAMES
+3cc80063f976   postgres   "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   5432/tcp   postgresdb
+
+giovedy@debian11-mini:~$ sudo docker container ls -a
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS                      PORTS      NAMES
+3cc80063f976   postgres   "docker-entrypoint.s…"   3 minutes ago    Up 3 minutes                5432/tcp   postgresdb
+394574c4c3b5   nginx      "/docker-entrypoint.…"   28 minutes ago   Exited (0) 25 minutes ago              webserver
+
+
+sudo docker container logs postgresdb
+
+sudo docker container inspect postgresdb
+
+giovedy@debian11-mini:~$ sudo docker container stop postgresdb
+postgresdb
+
+giovedy@debian11-mini:~$ sudo docker container ls -a
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS                      PORTS     NAMES
+3cc80063f976   postgres   "docker-entrypoint.s…"   7 minutes ago    Exited (0) 7 seconds ago              postgresdb
+394574c4c3b5   nginx      "/docker-entrypoint.…"   33 minutes ago   Exited (0) 30 minutes ago             webserver
+giovedy@debian11-mini:~$
+
+
+sudo docker container start postgresdb
+
+giovedy@debian11-mini:~$ sudo docker container rm postgresdb
+Error response from daemon: You cannot remove a running container 3cc80063f976b17ad4ce7308502485d36b2576077c2e62abc93d8fe7fe408fe5. Stop the container before attempting removal or force remove
+giovedy@debian11-mini:~$
+
+giovedy@debian11-mini:~$ sudo docker container rm -f postgresdb
+postgresdb
+
+giovedy@debian11-mini:~$ sudo docker container run -d -e POSTGRES_PASSWORD=pass postgres
+1cf53528540a17fc349b5f647b54989171f48fb560a892081cfc0b01c2c7896f
+
+giovedy@debian11-mini:~$ sudo docker container run -d -e POSTGRES_PASSWORD=pass postgres
+caa48771dfe5f89af734189ab3b9392620662286f775976019bff41ac217112f
+ 
+giovedy@debian11-mini:~$ sudo docker container run -d -e POSTGRES_PASSWORD=pass postgres
+049d8cc8ad1381242825be9d1f21ab15e0e41b668ac480163d076b07aa6d64f4
+
+giovedy@debian11-mini:~$ sudo docker ps -a
+CONTAINER ID   IMAGE      COMMAND                  CREATED              STATUS                      PORTS      NAMES
+049d8cc8ad13   postgres   "docker-entrypoint.s…"   About a minute ago   Up About a minute           5432/tcp   peaceful_mclean
+caa48771dfe5   postgres   "docker-entrypoint.s…"   About a minute ago   Up About a minute           5432/tcp   intelligent_galois
+1cf53528540a   postgres   "docker-entrypoint.s…"   About a minute ago   Up About a minute           5432/tcp   dazzling_bouman
+394574c4c3b5   nginx      "/docker-entrypoint.…"   37 minutes ago       Exited (0) 33 minutes ago              webserver
+
+giovedy@debian11-mini:~$ sudo docker container stop 049 caa 1cf
+049
+caa
+1cf
+
+giovedy@debian11-mini:~$ sudo docker container prune
+
+WARNING! This will remove all stopped containers.
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+049d8cc8ad1381242825be9d1f21ab15e0e41b668ac480163d076b07aa6d64f4
+caa48771dfe5f89af734189ab3b9392620662286f775976019bff41ac217112f
+1cf53528540a17fc349b5f647b54989171f48fb560a892081cfc0b01c2c7896f
+394574c4c3b5dc4ada28590da651209a9bf5eb0732809b13b6fbe3ad76948265
+
+Total reclaimed space: 1.093kB
+
+su docker container run -it --name ubuntu ubuntu
+giovedy@debian11-mini:~$ sudo docker container run -it --name ubuntu ubuntu
+root@5679d3dedbd8:/# exit
+
+giovedy@debian11-mini:~$ sudo docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED          STATUS                      PORTS     NAMES
+5679d3dedbd8   ubuntu    "bash"    55 seconds ago   Exited (0) 39 seconds ago             ubuntu
+
+giovedy@debian11-mini:~$ sudo docker container start ubuntu
+ubuntu
+
+giovedy@debian11-mini:~$ sudo docker container exec -it ubuntu bash
+root@5679d3dedbd8:/# pwd
+/
+root@5679d3dedbd8:/# exit
+exit
+
+giovedy@debian11-mini:~$ sudo docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED         STATUS              PORTS     NAMES
+5679d3dedbd8   ubuntu    "bash"    4 minutes ago   Up About a minute             ubuntu
+
+################################################################################################################################
+
+https://www.todopostgresql.com/cursos/ciclo-de-laboratorios-practicos-de-docker-en-ubuntu/
+
+giovedy@debian11-mini:~$ sudo apt install docker-compose
+
+giovedy@debian11-mini:~$ sudo docker-compose --version
+docker-compose version 1.25.0, build unknown
+-------------------------------------------------------
+docker-compose.yml
+
+version: '3'
+
+services:
+
+	contenedor1:
+		image: 'image:version'
+		restart: always
+		port:
+			- 8080:80
+		volumes: 'nombre:ruta_contenedor'
+		environment:
+			VARIABLE: valor
+		
+		contenedor2:
+			image: 'image:version'
+			restart: always
+			environment:
+				VARIABLE: valor
+				
+volumes:
+	nombre:
+-------------------------------------------------------
+
+giovedy@debian11-mini:~$ sudo docker-compose --version
+docker-compose version 1.25.0, build unknown
+
+giovedy@debian11-mini:~$ sudo docker container ls -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+giovedy@debian11-mini:~$ sudo docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+aaeaf667cfeb   bridge    bridge    local
+af8239e860c1   host      host      local
+84f6bda0f16f   none      null      local
+
+giovedy@debian11-mini:~$ sudo docker volume ls
+DRIVER    VOLUME NAME
+
+-----------------------------------------------------
+giovedy@debian11-mini:~/docker_compose/drupal$ cat docker-compose.yml
+version: '3'
+
+services:
+ drupal:
+  image: drupal
+  ports:
+   - "8080:80"
+  volumes:
+   - drupal-modules:/var/www/html/modules
+   - drupal-profiles:/var/www/html/profiles
+   - drupal-sites:/var/www/html/sites
+   - drupal-themes:/var/www/html/themes
+
+ postgres:
+  image: postgres
+  environment:
+   - POSTGRES_PASSWORD=password
+
+volumes:
+ drupal-modules:
+ drupal-profiles:
+ drupal-sites:
+ drupal-themes:
+-----------------------------------------------------
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker-compose up -d
+Creating network "drupal_default" with the default driver
+Creating volume "drupal_drupal-modules" with default driver
+Creating volume "drupal_drupal-profiles" with default driver
+Creating volume "drupal_drupal-sites" with default driver
+Creating volume "drupal_drupal-themes" with default driver
+Pulling drupal (drupal:)...
+latest: Pulling from library/drupal
+7a6db449b51b: Already exists
+ad2afdb99a9d: Pull complete
+dbc5aa907229: Pull complete
+82f252ab4ad1: Pull complete
+bf5b34fc9894: Pull complete
+6161651d3d95: Pull complete
+cf2adf296ef1: Pull complete
+4cbe7d6a3c63: Pull complete
+4258d0a5912c: Pull complete
+955d83cd91eb: Pull complete
+0d8b5e2e442c: Pull complete
+990372115c29: Pull complete
+09e8d84218b7: Pull complete
+0e43343046e8: Pull complete
+82de7da69131: Pull complete
+f2190d6b18db: Pull complete
+7e2f836a404c: Pull complete
+565d4a84874f: Pull complete
+Digest: sha256:b948ad9d5848904eb32c6624b7b70baa5b771b0e7232f0bd4e6a7482f869953c
+Status: Downloaded newer image for drupal:latest
+Creating drupal_drupal_1   ... done
+Creating drupal_postgres_1 ... done
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker network ls
+NETWORK ID     NAME             DRIVER    SCOPE
+aaeaf667cfeb   bridge           bridge    local
+9f16a4f02683   drupal_default   bridge    local
+af8239e860c1   host             host      local
+84f6bda0f16f   none             null      local
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker volume ls
+DRIVER    VOLUME NAME
+local     3be05440fa8fa664735841f6b9ca03bbd249b3831bd4ccc24ef24a75f7ca4756
+local     drupal_drupal-modules
+local     drupal_drupal-profiles
+local     drupal_drupal-sites
+local     drupal_drupal-themes
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker container ls
+CONTAINER ID   IMAGE      COMMAND                  CREATED          STATUS          PORTS                  NAMES
+3f6f27184df8   drupal     "docker-php-entrypoi…"   22 minutes ago   Up 22 minutes   0.0.0.0:8080->80/tcp   drupal_drupal_1
+bba3ef659061   postgres   "docker-entrypoint.s…"   22 minutes ago   Up 22 minutes   5432/tcp               drupal_postgres_1
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker-compose down
+Stopping drupal_drupal_1   ... done
+Stopping drupal_postgres_1 ... done
+Removing drupal_drupal_1   ... done
+Removing drupal_postgres_1 ... done
+Removing network drupal_default
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+aaeaf667cfeb   bridge    bridge    local
+af8239e860c1   host      host      local
+84f6bda0f16f   none      null      local
+
+giovedy@debian11-mini:~/docker_compose/drupal$  sudo docker volume ls
+DRIVER    VOLUME NAME
+local     3be05440fa8fa664735841f6b9ca03bbd249b3831bd4ccc24ef24a75f7ca4756
+local     drupal_drupal-modules
+local     drupal_drupal-profiles
+local     drupal_drupal-sites
+local     drupal_drupal-themes
+
+giovedy@debian11-mini:~/docker_compose/drupal$ sudo docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+-----------------------------------------------------
+giovedy@debian11-mini:~/docker_compose/wordpress$ cat docker-compose.yml
+version: '3'
+
+services:
+ wordpress:
+  depends_on:
+   - mysql
+  image: wordpress
+  restart: always
+  ports:
+   - 8080:80
+  environment:
+   WORDPRESS_DB_PASSWORD: wordpress
+
+ mysql:
+  image: mysql:8
+  restart: always
+  environment:
+   MYSQL_ROOT_PASSWORD: wordpress
+   MYSQL_DATABASE: wordpress
+   MYSQL_USER: wordpress
+   MYSQL_PASSWORD: wordpress
+-----------------------------------------------------
+
+giovedy@debian11-mini:~/docker_compose/wordpress$ sudo docker-compose up -d
+Creating network "wordpress_default" with the default driver
+Pulling mysql (mysql:8)...
+8: Pulling from library/mysql
+492d84e496ea: Pull complete
+bbe20050901c: Pull complete
+e3a5e171c2f8: Pull complete
+c2cedd8aa061: Pull complete
+d6a485af4cc9: Pull complete
+ee16a57baf60: Pull complete
+64bab9180d2a: Pull complete
+c3aceb7e4f48: Pull complete
+269002e5cf58: Pull complete
+d5abeb1bd18e: Pull complete
+cbd79da5fab6: Pull complete
+Digest: sha256:cdf3b62d78d1bbb1d2bd6716895a84014e00716177cbb7e90f6c6a37a21dc796
+Status: Downloaded newer image for mysql:8
+Pulling wordpress (wordpress:)...
+latest: Pulling from library/wordpress
+7a6db449b51b: Already exists
+ad2afdb99a9d: Already exists
+dbc5aa907229: Already exists
+82f252ab4ad1: Already exists
+bf5b34fc9894: Already exists
+6161651d3d95: Already exists
+cf2adf296ef1: Already exists
+d921da48d554: Pull complete
+b18a4562cdb2: Pull complete
+c2620408b8f1: Pull complete
+7674ea7f8b64: Pull complete
+d424de41e878: Pull complete
+95dce5dc9f57: Pull complete
+4a65afeeb0d9: Pull complete
+e3f4c7b3ecca: Pull complete
+0f855ed70a9b: Pull complete
+8fd46befb58e: Pull complete
+b10589319bdf: Pull complete
+5790f9dc2387: Pull complete
+de2f7f93bd55: Pull complete
+2ce17790b682: Pull complete
+Digest: sha256:c160b3abeb958081c47e27166fa613d3116e209b3d2736365b01b777bd95b1bb
+Status: Downloaded newer image for wordpress:latest
+Creating wordpress_mysql_1 ... done
+Creating wordpress_wordpress_1 ... done
+
+giovedy@debian11-mini:~/docker_compose/wordpress$ sudo docker network ls
+NETWORK ID     NAME                DRIVER    SCOPE
+aaeaf667cfeb   bridge              bridge    local
+af8239e860c1   host                host      local
+84f6bda0f16f   none                null      local
+27c498e33657   wordpress_default   bridge    local
+
+giovedy@debian11-mini:~/docker_compose/wordpress$ sudo docker volume ls
+DRIVER    VOLUME NAME
+local     60c301e09fdf716d55c71658ac579d37477ba7d7c047ee94713a19dc4a6b6f82
+local     a63601b2ce2abedc316a560913161a8d976e3cdc9f0bcbe883e392d4d586e002
+
+
+giovedy@debian11-mini:~/docker_compose/wordpress$  sudo docker container ls
+CONTAINER ID   IMAGE       COMMAND                  CREATED              STATUS              PORTS                  NAMES
+cb82b9a9a9fc   wordpress   "docker-entrypoint.s…"   About a minute ago   Up About a minute   0.0.0.0:8080->80/tcp   wordpress_wordpress_1
+9cc777186d72   mysql:8     "docker-entrypoint.s…"   About a minute ago   Up About a minute   3306/tcp, 33060/tcp    wordpress_mysql_1
